@@ -345,18 +345,40 @@ def get_staff_profile():
         if not hospital:
             return jsonify({'error': 'Hospital not found'}), 404
 
-        # Return the user's profile details
+        # Count the reports submitted by the staff member
+        reports_count = db.reports.count_documents({'staffId': user['id']})
+
+        # Count distinct patients managed by the staff member
+        distinct_patients_count = len(db.reports.distinct('patientName', {'staffId': user['id']}))
+
+        # Fetch the latest report submitted by the staff
+        latest_report = db.reports.find_one({'staffId': user['id']}, sort=[('generatedOn', -1)])
+
+        latest_activity = None
+        if latest_report:
+            latest_activity = {
+                'patientName': latest_report['patientName'],
+                'scanType': latest_report['scanType'],
+                'outcome': latest_report['outcome'],
+                'sex': latest_report['sex']  # Adding the sex field
+            }
+
+        # Return the user's profile details along with reports and patient counts
         profile = {
             'staffId': user['id'],
             'name': user['name'],
             'email': user['email'],
             'role': user['role'],
-            'hospitalName': hospital['name']  # Include hospital name
+            'hospitalName': hospital['name'],  # Include hospital name
+            'reportsSubmitted': reports_count,  # Dynamically calculated
+            'totalPatients': distinct_patients_count,  # Dynamically calculated
+            'latestActivity': latest_activity  # Most recent report details
         }
 
         return jsonify(profile)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
  
 # Define where to save uploaded files
 UPLOAD_FOLDER = './uploads'
