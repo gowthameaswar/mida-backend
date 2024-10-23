@@ -6,3 +6,5 @@ chat.py
 final_report.pdf
 template.pdf
 data/
+models/chest_ct_classifier_vgg16.h5
+models/xray_model.h5
