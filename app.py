@@ -33,6 +33,10 @@ except Exception as e:
 from flask import send_from_directory
 from urllib.parse import unquote
 
+@app.route('/')
+def home():
+    return "Welcome to the MIDA backend!"
+
 @app.route('/uploads/<path:filename>')
 def serve_image(filename):
     decoded_filename = unquote(filename).replace(' ', '_')  # Replace spaces with underscores
@@ -684,15 +688,7 @@ def send_password_change_email(to_email, user_name, user_type):
         print(f"Failed to send email: {str(e)}")
 
 
-# Example request data for changing the password:
-# {
-#   "email": "user@example.com",
-#   "oldPassword": "oldPassword123",
-#   "newPassword": "newPassword123",
-#   "userType": "staff"  # or 'admin'
-# }
-
 if __name__ == '__main__':
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)  # Specify the port here
