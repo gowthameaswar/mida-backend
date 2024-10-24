@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -670,6 +670,7 @@ def change_password():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
 # Function to send an email after a password change
 def send_password_change_email(to_email, user_name, user_type):
     try:
@@ -709,6 +710,10 @@ def send_password_change_email(to_email, user_name, user_type):
     except Exception as e:
         print(f"Failed to send email: {str(e)}")
 
+@app.route('/api/template-pdf', methods=['GET'])
+def get_template_pdf():
+    # Ensure the path to the PDF is correct
+    return send_file('D:/College/Sem 9/Minor Project/master/backend/template.pdf', as_attachment=False)
 
 if __name__ == '__main__':
     if not os.path.exists(UPLOAD_FOLDER):
